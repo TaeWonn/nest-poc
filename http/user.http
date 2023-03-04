@@ -1,0 +1,11 @@
+### 사용자 조회
+GET {{host}}/api/v1/users/1
+
+### 회원가입
+POST {{host}}/api/v1/users
+Content-Type: application/json
+
+{
+  "accessToken": "",
+  "nickname": "test22"
+}
