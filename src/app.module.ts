@@ -1,13 +1,15 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UserModule } from './user/user.module';
+import { UserModule } from './domain/user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmConfigService } from './configs/typeorm/type-orm-config.service';
 import { TypeOrmConfigModule } from './configs/typeorm/type-orm-config.module';
-import { join } from 'path';
-import { ServeStaticModule } from '@nestjs/serve-static';
+import { MarketItemModule } from './domain/market/market-item.module';
+import { MulterModule } from '@nestjs/platform-express';
+import { NestjsFormDataModule } from 'nestjs-form-data';
+import { FormDataConfigService } from './configs/form-data.config';
 
 @Module({
   imports: [
@@ -15,17 +17,18 @@ import { ServeStaticModule } from '@nestjs/serve-static';
       isGlobal: true,
       envFilePath: `.env.${process.env.NODE_ENV}`,
       ignoreEnvFile: process.env.NODE_ENV === 'prod',
-      //validate,
     }),
     TypeOrmModule.forRootAsync({
       imports: [TypeOrmConfigModule],
       useClass: TypeOrmConfigService,
       inject: [TypeOrmConfigService],
     }),
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'client'),
+    MulterModule.register({
+      dest: './files',
     }),
+    NestjsFormDataModule.configAsync({ useClass: FormDataConfigService }),
     UserModule,
+    MarketItemModule,
   ],
   controllers: [AppController],
   providers: [AppService],
