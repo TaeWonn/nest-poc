@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import { KakaoGetUserResponse } from './dto/kakao-get-user.response';
+import { BadRequestException } from '../../exceptions/bad-request.exception';
 
 @Injectable()
 export class KakaoApi {
@@ -12,12 +13,16 @@ export class KakaoApi {
   }
 
   async getUser(accessToken: string): Promise<KakaoGetUserResponse> {
-    return await (
-      await axios.get(`${this.kakaoUrl}/v2/user/me`, {
+    const response = await axios
+      .get(`${this.kakaoUrl}/v2/user/me`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       })
-    ).data;
+      .catch(() => {
+        throw new BadRequestException(null);
+      });
+
+    return response.data;
   }
 }
