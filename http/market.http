@@ -1,0 +1,85 @@
+### 카테고리 조회
+GET {{host}}/api/v1/market/categories
+
+### 상품 리스트 조회
+GET {{host}}/api/v1/market/items
+ ?categoryId=1
+ &page=1
+ &size=10
+
+### 상품 조회
+GET {{host}}/api/v1/market/items/1
+
+### 상품등록
+POST {{host}}/api/v1/market/items
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="files[]"; filename="test.png"
+Content-Type: image/png
+
+< ./image/test.png
+--boundary
+Content-Disposition: form-data; name="categoryId"
+
+1
+--boundary
+Content-Disposition: form-data; name="price"
+
+1000
+--boundary
+Content-Disposition: form-data; name="options[].name"
+
+Test
+--boundary
+Content-Disposition: form-data; name="options[].additionalPrice"
+
+1
+--boundary
+Content-Disposition: form-data; name="options[].name"
+
+Test
+--boundary--
+
+### 상품 상태 변경
+PUT {{host}}/api/v1/market/items/status/1
+Content-Type: application/json
+
+{
+  "status": "Available"
+}
+
+### 주문
+POST {{host}}/api/v1/market/items/order
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "marketItemId": 1,
+  "marketItemOptionsIds": [
+    1
+  ],
+  "contactPhone": "01012341234"
+}
+
+### 결제
+POST {{host}}/api/v1/market/items/order/payment
+Content-Type: application/json
+
+{
+  "paymentKey": "9o5gEq4k6YZ1aOwX7K8m4RwxdYO7xqryQxzvNPGenpDAlBdb",
+  "amount": 15000,
+  "orderId": "market-20",
+  "userId": 1
+}
+
+### test2
+POST https://api.tosspayments.com/v1/payments/confirm
+Content-Type: application/json
+Authorization: Basic dGVzdF9za19YakV4UGVKV1lWUU55NUV2SmdyNDlSNWd2TkxkOg
+
+{
+  "paymentKey": "k0A2Ga1QqXjExPeJWYVQx5AkEQoODj349R5gvNLdzZwO6oKl",
+  "amount": 15000,
+  "orderId": "market-18"
+}
