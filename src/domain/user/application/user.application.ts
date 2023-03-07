@@ -1,16 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { UserService } from '../user.service';
-import { TransactionManagerService } from '../../configs/trx/transaction-manager.service';
-import { KakaoApi } from '../../apis/kakao/kakao.api';
+import { KakaoApi } from '../../../apis/kakao/kakao.api';
 import { UserGenerator } from './user.generator';
 import { DataSource } from 'typeorm';
+import { BadRequestException } from '../../../exceptions/bad-request.exception';
 
 @Injectable()
 export class UserApplication {
   constructor(
     private readonly service: UserService,
     private readonly generator: UserGenerator,
-    private readonly transaction: TransactionManagerService,
     private readonly kakaoApi: KakaoApi,
     private readonly dataSource: DataSource,
   ) {}
@@ -19,19 +18,28 @@ export class UserApplication {
     const res = await this.kakaoApi.getUser(accessToken);
 
     if (!res.id) {
-      throw Error('kakao login failed');
+      throw new BadRequestException('kakao login failed');
     }
 
-    await this.dataSource.transaction(async (manager) => {
+    await this.dataSource.transaction(async () => {
       const users = await this.service.findNickname(nickname);
       if (users.length > 0) {
-        throw Error('already used nickname');
+        throw new BadRequestException('already used nickname');
       }
       const user = this.generator.create(res.id, nickname);
       await this.service.save(user);
     });
-    // await this.transaction.execute(async (runner) => {
-    //
-    // });
+  }
+
+  async login(accessToken: string) {
+    const res = await this.kakaoApi.getUser(accessToken);
+    if (!res.id) {
+      throw new BadRequestException('kakao login failed');
+    }
+
+    const user = await this.service.findKakaoUserId(res.id);
+    if (!user) {
+      throw new BadRequestException('user not found');
+    }
   }
 }

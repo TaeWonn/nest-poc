@@ -17,6 +17,10 @@ export class UserService {
     return this.repository.findBy({ nickname });
   }
 
+  async findKakaoUserId(kakaoUserId: number): Promise<User> {
+    return await this.repository.findOneBy({ kakaoUserId });
+  }
+
   async save(user: User) {
     await this.repository.insert(user);
   }

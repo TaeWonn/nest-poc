@@ -10,7 +10,7 @@ import {
 
 @Entity({ name: 'user' })
 export class User extends BaseEntity {
-  @PrimaryGeneratedColumn('rowid')
+  @PrimaryGeneratedColumn('increment')
   id: number;
 
   @Column({ type: 'varchar', length: 30, nullable: true })
