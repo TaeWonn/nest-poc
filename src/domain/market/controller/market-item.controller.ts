@@ -23,7 +23,6 @@ import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 export class MarketItemController {
   constructor(private readonly application: MarketItemApplication) {}
 
-  @UseGuards(JwtAuthGuard)
   @Get('/categories')
   async getCategories(): Promise<MarketItemCategoryDto[]> {
     return await this.application.getCategories();
