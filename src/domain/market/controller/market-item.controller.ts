@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { MarketItemCategoryDto } from '../dto/market-item-category.dto';
 import { MarketItemApplication } from '../application/market-item.application';
@@ -16,11 +17,13 @@ import { MarketItemSaveRequest } from '../dto/market-item-save.request';
 import { MarketItemStatusRequest } from '../dto/market-item-status.request';
 import { MarketItemOneDto } from '../dto/market-item-one.dto';
 import { FormDataRequest } from 'nestjs-form-data';
+import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 
 @Controller('api/v1/market')
 export class MarketItemController {
   constructor(private readonly application: MarketItemApplication) {}
 
+  @UseGuards(JwtAuthGuard)
   @Get('/categories')
   async getCategories(): Promise<MarketItemCategoryDto[]> {
     return await this.application.getCategories();
@@ -40,12 +43,14 @@ export class MarketItemController {
     return await this.application.getItem(id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('/items')
   @FormDataRequest()
   async registerItem(@Body() dto: MarketItemSaveRequest) {
     await this.application.addItem(dto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Put('/items/status/:id')
   async modifyStatus(
     @Param('id', ParseIntPipe) id: number,

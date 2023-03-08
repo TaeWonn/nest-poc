@@ -15,5 +15,5 @@ POST {{host}}/api/v1/users/login
 Content-Type: application/json
 
 {
-  "accessToken": "9SBNUNXmS8WavoM07dVeozYrCufyKn0N8pQvotdxCisM0gAAAYasky4s"
+  "accessToken": "GQxv1GYl3zEr4KrAU7juo-M0w2WnlE4ApsoWgsXsCj10lwAAAYa-mQ82"
 }

@@ -7,18 +7,16 @@ export class MarketItemOrderRequest {
   marketItemId: number;
   @IsNumber({}, { each: true })
   marketItemOptionsIds: number[];
-  @IsNumber()
-  userId: number;
   @IsString()
   @IsNotEmpty()
   contactPhone: string;
 
-  toOrder(totalPrice: number): MarketItemOrder {
+  toOrder(totalPrice: number, userId: number): MarketItemOrder {
     const order = new MarketItemOrder();
     order.contactPhone = this.contactPhone;
     order.status = MarketItemOrderStatus.ORDERED;
     order.totalPrice = totalPrice;
-    order.buyerId = this.userId;
+    order.buyerId = userId;
     return order;
   }
 }

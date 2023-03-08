@@ -19,7 +19,7 @@ export class User extends BaseEntity {
   @Column({ type: 'varchar', length: 30 })
   nickname: string;
 
-  @Column({ type: 'bigint' })
+  @Column({ type: 'bigint', unique: true })
   kakaoUserId: number;
 
   @CreateDateColumn({ name: 'create_at' })

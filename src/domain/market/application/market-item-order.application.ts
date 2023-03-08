@@ -29,7 +29,10 @@ export class MarketItemOrderApplication {
     private readonly paymentService: PaymentService,
   ) {}
 
-  async buyItem(dto: MarketItemOrderRequest): Promise<MarketItemOrderDto> {
+  async buyItem(
+    dto: MarketItemOrderRequest,
+    userId: number,
+  ): Promise<MarketItemOrderDto> {
     const item = await this.service.findByIdOrThrow(dto.marketItemId);
     const options = await item?.options;
 
@@ -40,6 +43,7 @@ export class MarketItemOrderApplication {
       item,
       totalPrice,
       filterOptions,
+      userId,
     );
 
     await this.dataSource.transaction(

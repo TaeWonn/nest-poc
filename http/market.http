@@ -1,5 +1,6 @@
 ### 카테고리 조회
 GET {{host}}/api/v1/market/categories
+Authorization: {{token}}
 
 ### 상품 리스트 조회
 GET {{host}}/api/v1/market/items
@@ -51,6 +52,7 @@ Content-Type: application/json
 
 ### 주문
 POST {{host}}/api/v1/market/items/order
+Authorization: {{token}}
 Content-Type: application/json
 
 {

@@ -15,8 +15,9 @@ export class MarketItemOrderGenerator {
     item: MarketItem,
     totalPrice: number,
     filterOptions: MarketItemOption[],
+    userId: number,
   ): Promise<MarketItemOrder> {
-    const order = dto.toOrder(totalPrice);
+    const order = dto.toOrder(totalPrice, userId);
     order.options = this.provider.toOptions(filterOptions);
     order.marketItem = Promise.resolve(item);
     return order;

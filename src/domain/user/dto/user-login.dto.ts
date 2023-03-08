@@ -1,7 +1,13 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { User } from '../entity/user.entity';
 
 export class UserLoginDto {
-  @IsString()
-  @IsNotEmpty()
+  id: number;
+  name: string;
   accessToken: string;
+
+  constructor(user: User, accessToken: string) {
+    this.id = user.id;
+    this.name = user.name;
+    this.accessToken = accessToken;
+  }
 }

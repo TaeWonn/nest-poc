@@ -7,9 +7,12 @@ import { UserRepository } from './user.repository';
 import { UserApplication } from './application/user.application';
 import { UserGenerator } from './application/user.generator';
 import { KakaoApi } from '../../apis/kakao/kakao.api';
+import { JwtModule } from '@nestjs/jwt';
+import { UserConverter } from './application/user.converter';
+import { AuthService } from '../auth/auth.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User])],
+  imports: [TypeOrmModule.forFeature([User]), JwtModule],
   controllers: [UserController],
   providers: [
     UserService,
@@ -17,6 +20,8 @@ import { KakaoApi } from '../../apis/kakao/kakao.api';
     UserApplication,
     UserGenerator,
     KakaoApi,
+    UserConverter,
+    AuthService,
   ],
 })
 export class UserModule {}
