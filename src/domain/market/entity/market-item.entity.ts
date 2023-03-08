@@ -29,6 +29,9 @@ export class MarketItem extends BaseEntity {
   @Column({ type: 'int' })
   price: number;
 
+  @Column({ type: 'simple-array' })
+  images: string[];
+
   @CreateDateColumn({ name: 'create_at' })
   createdAt: Date;
 
@@ -38,7 +41,9 @@ export class MarketItem extends BaseEntity {
   @DeleteDateColumn({ name: 'delete_at' })
   deletedAt?: Date | null;
 
-  @OneToMany(() => MarketItemOption, (option) => option.marketItem)
+  @OneToMany(() => MarketItemOption, (option) => option.marketItem, {
+    cascade: ['insert'],
+  })
   @JoinColumn()
   options: Promise<MarketItemOption[]>;
 }

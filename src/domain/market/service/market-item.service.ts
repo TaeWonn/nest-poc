@@ -23,7 +23,7 @@ export class MarketItemService {
   }
 
   async insert(item: MarketItem) {
-    await this.repository.insert(item);
+    await this.repository.save(item);
   }
 
   async save(item: MarketItem) {

@@ -9,13 +9,15 @@ export class MarketItemOneDto {
   price: number;
   createdAt: Date;
   options: MarketItemOptionDto[] = [];
+  images: string[];
 
-  constructor(item: MarketItem, options: MarketItemOption[]) {
+  constructor(item: MarketItem, options: MarketItemOption[], images: string[]) {
     this.id = item.id;
     this.title = item.title;
     this.status = item.status;
     this.price = item.price;
     this.createdAt = item.createdAt;
+    this.images = images;
     this.options = options
       ?.sort((a, b) => a.order - b.order)
       ?.map((option) => new MarketItemOptionDto(option));

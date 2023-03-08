@@ -7,17 +7,18 @@ import {
   Post,
   Put,
   Query,
+  Request,
   UseGuards,
 } from '@nestjs/common';
 import { MarketItemCategoryDto } from '../dto/market-item-category.dto';
 import { MarketItemApplication } from '../application/market-item.application';
-import { MarketItem } from '../entity/market-item.entity';
 import { MarketItemSearchRequest } from '../dto/market-item-search.request';
 import { MarketItemSaveRequest } from '../dto/market-item-save.request';
 import { MarketItemStatusRequest } from '../dto/market-item-status.request';
 import { MarketItemOneDto } from '../dto/market-item-one.dto';
 import { FormDataRequest } from 'nestjs-form-data';
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
+import { MarketItemListDto } from '../dto/market-item-list.dto';
 
 @Controller('api/v1/market')
 export class MarketItemController {
@@ -31,7 +32,7 @@ export class MarketItemController {
   @Get('/items')
   async getItems(
     @Query() param: MarketItemSearchRequest,
-  ): Promise<MarketItem[]> {
+  ): Promise<MarketItemListDto[]> {
     return await this.application.getItems(param);
   }
 
@@ -45,8 +46,9 @@ export class MarketItemController {
   @UseGuards(JwtAuthGuard)
   @Post('/items')
   @FormDataRequest()
-  async registerItem(@Body() dto: MarketItemSaveRequest) {
-    await this.application.addItem(dto);
+  async registerItem(@Body() dto: MarketItemSaveRequest, @Request() req) {
+    const options = req.body.options;
+    await this.application.addItem(dto, options);
   }
 
   @UseGuards(JwtAuthGuard)

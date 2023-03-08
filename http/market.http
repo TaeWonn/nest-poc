@@ -9,10 +9,11 @@ GET {{host}}/api/v1/market/items
  &size=10
 
 ### 상품 조회
-GET {{host}}/api/v1/market/items/1
+GET {{host}}/api/v1/market/items/5
 
 ### 상품등록
 POST {{host}}/api/v1/market/items
+Authorization: {{token}}
 Content-Type: multipart/form-data; boundary=boundary
 
 --boundary
@@ -29,17 +30,18 @@ Content-Disposition: form-data; name="price"
 
 1000
 --boundary
-Content-Disposition: form-data; name="options[].name"
+Content-Disposition: form-data; name="title"
 
-Test
+TestTitle
 --boundary
-Content-Disposition: form-data; name="options[].additionalPrice"
+Content-Disposition: form-data; name="options"
 
-1
+{"name":"test", "order": 0, "additionalPrice": 500}
+
 --boundary
-Content-Disposition: form-data; name="options[].name"
+Content-Disposition: form-data; name="options"
 
-Test
+{"name":"test2", "order": 1, "additionalPrice": 500}
 --boundary--
 
 ### 상품 상태 변경

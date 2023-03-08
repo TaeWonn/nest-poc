@@ -1,26 +1,41 @@
 import { BadRequestException } from '../../../exceptions/bad-request.exception';
 import { Injectable } from '@nestjs/common';
-import { MarketItemSaveRequest } from '../dto/market-item-save.request';
+import {
+  MarketItemOptionRequest,
+  MarketItemSaveRequest,
+} from '../dto/market-item-save.request';
 import { MarketItemOrderRequest } from '../dto/market-item-order.request';
 import { MarketItemOption } from '../entity/market-item-option.entity';
 import { MarketItem } from '../entity/market-item.entity';
 import { MarketItemStatus } from '../entity/market-item.type';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class MarketItemValidator {
-  saveValidate(dto: MarketItemSaveRequest) {
+  saveValidate(
+    dto: MarketItemSaveRequest,
+    options: string[],
+  ): MarketItemOptionRequest[] {
     if (!dto.files || dto.files.length == 0) {
       throw new BadRequestException('image empty');
     }
 
-    if (!dto.options || dto.options.length === 0) {
+    if (!options || options.length === 0) {
       throw new BadRequestException('option empty');
     }
-    dto.options.forEach((option) => {
+    const convertOptions = options.map(
+      (o): MarketItemOptionRequest =>
+        plainToInstance(MarketItemOptionRequest, JSON.parse(o)),
+    );
+    convertOptions.forEach((option) => {
+      if (!option.name) {
+        throw new BadRequestException('options name is not empty');
+      }
       if (dto.price - option.additionalPrice <= 0) {
         throw new BadRequestException('option price is over then item price');
       }
     });
+    return convertOptions;
   }
 
   orderValidate(
