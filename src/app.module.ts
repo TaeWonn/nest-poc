@@ -11,6 +11,7 @@ import { MulterModule } from '@nestjs/platform-express';
 import { NestjsFormDataModule } from 'nestjs-form-data';
 import { FormDataConfigService } from './configs/form-data.config';
 import { AuthModule } from './domain/auth/auth.module';
+import { EventGateway } from './socket/event.gateway';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { AuthModule } from './domain/auth/auth.module';
     UserModule,
     MarketItemModule,
     AuthModule,
+    EventGateway,
   ],
   controllers: [AppController],
   providers: [AppService],
