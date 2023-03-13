@@ -16,16 +16,17 @@ export class EventGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   users = {};
   socketRoom = {};
+  clients = [];
   MAXIMUM = 5;
 
-  handleConnection(client: Socket): any {
-    console.log(`connected id is ${client.id}`);
-    //client[client['id']] = client;
+  handleConnection(socket: Socket): any {
+    console.log(`connected id is ${socket.id}`);
+    this.clients[socket['id']] = socket;
   }
 
   handleDisconnect(socket: Socket): any {
     console.log('disconnected id is ', socket['id']);
-    //delete client[client['id']];
+    delete this.clients[socket['id']];
     const roomID = this.socketRoom[socket.id];
 
     if (this.users[roomID]) {
@@ -44,11 +45,11 @@ export class EventGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('join_room')
-  joinRoom(@ConnectedSocket() socket: Socket, @MessageBody() data) {
-    console.log(`join room ${socket.id}, ${data}`);
-    if (this.users[data.room]) {
+  joinRoom(@ConnectedSocket() socket: Socket, @MessageBody() { room }) {
+    console.log(`join room ${socket.id}, ${room}`);
+    if (this.users[room]) {
       // 현재 입장하려는 방에 있는 인원수
-      const currentRoomLength = this.users[data.room].length;
+      const currentRoomLength = this.users[room].length;
       if (currentRoomLength === this.MAXIMUM) {
         // 인원수가 꽉 찼다면 돌아갑니다.
         socket.to(socket.id).emit('room_full');
@@ -56,21 +57,19 @@ export class EventGateway implements OnGatewayConnection, OnGatewayDisconnect {
       }
 
       // 여분의 자리가 있다면 해당 방 배열에 추가해줍니다.
-      this.users[data.room] = [...this.users[data.room], { id: socket.id }];
+      this.users[room] = [...this.users[room], { id: socket.id }];
     } else {
       // 방이 존재하지 않다면 값을 생성하고 추가해줍시다.
-      this.users[data.room] = [{ id: socket.id }];
+      this.users[room] = [{ id: socket.id }];
     }
-    this.socketRoom[socket.id] = data.room;
+    this.socketRoom[socket.id] = room;
 
     // 입장
-    socket.join(data.room);
+    socket.join(room);
 
     // 입장하기 전 해당 방의 다른 유저들이 있는지 확인하고
     // 다른 유저가 있었다면 offer-answer을 위해 알려줍니다.
-    const others = this.users[data.room].filter(
-      (user) => user.id !== socket.id,
-    );
+    const others = this.users[room].filter((user) => user.id !== socket.id);
     if (others.length) {
       this.server.sockets.to(socket.id).emit('all_users', others);
     }
@@ -93,8 +92,11 @@ export class EventGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() socket: Socket,
     @MessageBody() { candidate, roomName },
   ) {
+    console.log(this.users);
     console.log(
-      `answer roomName: ${roomName}, candidate: ${JSON.stringify(candidate)}`,
+      `candidate roomName: ${roomName}, candidate: ${JSON.stringify(
+        candidate,
+      )}`,
     );
     socket.to(roomName).emit('getCandidate', candidate);
   }
